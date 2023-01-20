@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.cursokotlin.todoapp'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.cursokotlin.todoapp"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -51,7 +51,6 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
@@ -68,9 +67,10 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.41"
 
     //LiveData
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation "androidx.compose.runtime:runtime-livedata:1.2.1"
 
-
-
+    implementation "androidx.room:room-runtime:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.0"
+    implementation "androidx.room:room-ktx:2.5.0"
 }

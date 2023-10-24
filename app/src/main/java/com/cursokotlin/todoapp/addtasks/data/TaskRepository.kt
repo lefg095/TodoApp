@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
 
     val tasks: Flow<List<TaskModel>> =
-        taskDao.getTasks().map { items -> items.map { TaskModel(it.id, it.task, it.selected) } }
+        taskDao.getTasks().map { items -> items.map { TaskModel(it.id, it.taskTitle, it.task, it.selected) } }
 
     suspend fun add(taskModel: TaskModel) {
         taskDao.addTask(taskModel.toData())
@@ -26,5 +26,5 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
 }
 
 fun TaskModel.toData():TaskEntity{
-    return TaskEntity(this.id, this.task, this.selected)
+    return TaskEntity(this.id, this.taskTitle, this.task, this.selected)
 }

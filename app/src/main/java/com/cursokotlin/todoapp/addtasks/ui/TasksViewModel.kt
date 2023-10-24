@@ -1,6 +1,5 @@
 package com.cursokotlin.todoapp.addtasks.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,10 +8,16 @@ import com.cursokotlin.todoapp.addtasks.domain.AddTaskUseCase
 import com.cursokotlin.todoapp.addtasks.domain.DeleteTaskUseCase
 import com.cursokotlin.todoapp.addtasks.domain.GetTasksUseCase
 import com.cursokotlin.todoapp.addtasks.domain.UpdateTaskUseCase
-import com.cursokotlin.todoapp.addtasks.ui.TasksUiState.*
+import com.cursokotlin.todoapp.addtasks.ui.TasksUiState.Error
+import com.cursokotlin.todoapp.addtasks.ui.TasksUiState.Loading
+import com.cursokotlin.todoapp.addtasks.ui.TasksUiState.Success
 import com.cursokotlin.todoapp.addtasks.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,14 +36,29 @@ class TasksViewModel @Inject constructor(
     private val _showDialog = MutableLiveData<Boolean>()
     val showDialog:LiveData<Boolean> = _showDialog
 
+    private val _taskSelected = MutableLiveData<TaskModel?>()
+    val taskSelected:LiveData<TaskModel?> = _taskSelected
+
+    private val _showConfirmDeleteTask = MutableLiveData<Boolean>()
+    val showConfirmDeleteTask:LiveData<Boolean> = _showConfirmDeleteTask
+
+    fun onConfirmDeleteDialogClose() {
+        _showConfirmDeleteTask.value = false
+    }
+
+    fun onShowConfirmDeleteDialogClick(task: TaskModel) {
+        _showConfirmDeleteTask.value = true
+        _taskSelected.value = task
+    }
+
     fun onDialogClose() {
         _showDialog.value = false
     }
 
-    fun onTasksCreated(task: String) {
+    fun onTasksCreated(taskModel: TaskModel) {
         _showDialog.value = false
         viewModelScope.launch {
-            addTaskUseCase(TaskModel(task = task))
+            addTaskUseCase(taskModel)
         }
     }
 
@@ -53,6 +73,7 @@ class TasksViewModel @Inject constructor(
     }
 
     fun onItemRemove(taskModel: TaskModel) {
+        _showConfirmDeleteTask.value = false
         viewModelScope.launch {
             deleteTaskUseCase(taskModel)
         }
